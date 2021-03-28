@@ -10,27 +10,68 @@
     <body>
         <div id="app"></div>
 
-        <div class="container">
-            <h1>Comentários</h1>
-            <hr>
-            <div class="form-todo form-group"></div>
-            <p>
-                <input placeholder="Nome" name="author" type="text">
-            </p>
-        </div>
-
         <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
         <script>
             new Vue({
-                el: '#app',
-                template: ``,
-                data(){
+                el:'#app',
+                template:`
+                <div class="container">
+                    <h1>Comentários</h1>
+                    <hr>
+                    <div class="form-todo form-group"></div>
+                    <p>
+                        <input placeholder="Nome" name="author" type="text" class="form-control" v-model="author">
+                    </p>
+                    <p>
+                        <textarea placeholder="Comentário" name="message" cols="30" rows="10" class="form-control" v-model="message"></textarea>
+                    </p>
+                    <p>
+                        <button v-on:click="addComment" type="submit" class="btn btn-success">enviar comentário</button>
+                    </p>
+                    <div class="list-group">
+                        <div class="list-group-item" v-for="(comment, index) in allComments">
+                            <span class="author-comment">Autor: <strong>{{ comment.author }}</strong></span>
+                            <p> {{ comment.message }}</p>
+                            <div>
+                                <button v-on:click="removeComment(index)" type="reset" class="btn btn-danger mt-2">apagar comentário</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `,
+                data() {
                     return {
-                        comments: [
-                            name: 'Bruno'
-                            message: 'RSN: Yotyan'
-                            chestAmmo: 550
-                        ]
+                        comments: [],
+                        author: '',
+                        message: ''
+                    }
+                },
+                methods:{
+                    addComment(){
+                        this.comments.push({
+                            author: this.author,
+                            message: this.message
+                        });
+                    },
+
+                    removeComment(index){   
+                        this.comments.splice(index, 1)
+                    }
+                },
+
+                computed: {
+                    allComments(){
+                        return this.comments.map(comment => ({
+                            ...comment,
+                            author: comment.author.trim() === '' ? 'Anônimo' : comment.author
+                        }))
+                    }
+                },
+
+
+                watch: {
+                    comments(val) {
+                        console.log(val)
                     }
                 }
             })
